@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AMUPS KODUR WEST RESULT</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    .loader {
+      margin-left:45%;
+      border: 2px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 2px solid #3498db;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+    }
+    @keyframes spin {
+      0% {transform: rotate(0deg);}
+      100% {transform: rotate(360deg);}
+    }
+  </style>
+</head>
+<body>
+  <!-- Loader -->
+  <div id="lod" class="w3-modal">
+    <div class="w3-center">
+      <div class="loader"></div>
+    </div>
+  </div>
+
+  <!-- Search Form -->
+  <div class="w3-row w3-small" style="margin-top:20px;margin-left:25%;">
+    <h4>AMUPS KODUR WEST RESULT</h4>
+
+    <form id="lab" onsubmit="event.preventDefault(); subm();">
+      <div class="w3-col s8">
+        <input type="text" id="roll" name="roll"
+               placeholder="Enter Registration No"
+               class="w3-input w3-border w3-round-large w3-col s4" required>
+
+        <input type="text" id="className" name="className"
+               placeholder="Enter Class (e.g., 10A)"
+               class="w3-input w3-border w3-round-large w3-col s3 w3-margin-left" required>
+
+        <input type="submit" value="Search"
+               class="w3-button w3-blue w3-round-large w3-col s2 w3-margin-left">
+
+        <input type="button" value="Print"
+               class="w3-button w3-red w3-round-large w3-col s2 w3-margin-left"
+               onclick="Print('PrintDiv')"/>
+      </div>
+    </form>
+  </div>
+
+  <!-- Results Section -->
+  <div id="PrintDiv">
+    <div id="rs" class="w3-margin-top" style="margin-left:2%;"></div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    function subm() {
+      var roll = document.getElementById("roll").value.trim();
+      var className = document.getElementById("className").value.trim();
+
+      if (!roll || !className) {
+        alert("Please enter both Register No and Class.");
+        return;
+      }
+
+      document.getElementById("lod").style.display = "block";
+
+      google.script.run
+        .withFailureHandler(fail)
+        .withSuccessHandler(pass)
+        .sub({ roll: roll, className: className });
+    }
+
+    function fail(error) {
+      document.getElementById("lod").style.display = "none";
+      document.getElementById("rs").innerHTML =
+        "<p style='color:red;text-align:center;'>Error: " + error + "</p>";
+    }
+
+    function pass(result) {
+      document.getElementById("lod").style.display = "none";
+      document.getElementById("rs").innerHTML = result;
+      document.getElementById("lab").reset();
+    }
+
+    function Print(DivID) {
+      var iPrint = document.getElementById(DivID).innerHTML;
+      var docprint = window.open("", "");
+      docprint.document.open();
+      docprint.document.write('<!DOCTYPE html><html><head><title>MARKSHEET</title><style>table,td{border:1px solid grey;}</style></head><body onLoad="self.print()"><center>');
+      docprint.document.write(iPrint);
+      docprint.document.write('</center></body></html>');
+      docprint.document.close();
+      docprint.focus();
+    }
+  </script>
+</body>
+</html>
